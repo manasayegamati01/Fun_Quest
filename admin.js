@@ -29,6 +29,56 @@ function setMessage(element, text, type) {
   if (type) element.classList.add(type);
 }
 
+function normalizeError(value, fallback) {
+  if (!value) return fallback;
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (typeof value === "object") {
+    if (typeof value.message === "string") return value.message;
+    if (value.error && typeof value.error === "string") return value.error;
+    if (value.error && typeof value.error === "object") {
+      if (typeof value.error.message === "string") return value.error.message;
+      if (typeof value.error.code === "string") return value.error.code;
+    }
+    try {
+      return JSON.stringify(value);
+    } catch (_error) {
+      return fallback;
+    }
+  }
+  return fallback;
+}
+
+function getErrorMessage(result, fallback) {
+  if (!result) return fallback;
+  return normalizeError(result.error ?? result, fallback);
+}
+
+async function readResponsePayload(response) {
+  const contentType = response.headers.get("content-type") || "";
+  let payload = null;
+
+  if (contentType.includes("application/json")) {
+    try {
+      payload = await response.json();
+    } catch (_error) {
+      payload = null;
+    }
+  } else {
+    const text = await response.text();
+    if (text) payload = { error: text };
+  }
+
+  if (!payload || typeof payload !== "object") payload = {};
+  if (!Object.prototype.hasOwnProperty.call(payload, "ok")) {
+    payload.ok = response.ok;
+  }
+  if (!response.ok && !payload.error) {
+    payload.error = `Request failed (${response.status})`;
+  }
+  return payload;
+}
+
 function formatClock(seconds) {
   const safe = Math.max(0, seconds);
   const mm = String(Math.floor(safe / 60)).padStart(2, "0");
@@ -47,7 +97,7 @@ async function getJSON(url) {
     method: "GET",
     headers: { Accept: "application/json" }
   });
-  return response.json();
+  return readResponsePayload(response);
 }
 
 async function postJSON(url, payload) {
@@ -56,14 +106,14 @@ async function postJSON(url, payload) {
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(payload)
   });
-  return response.json();
+  return readResponsePayload(response);
 }
 
 async function markPlayer(playerId, points) {
   try {
     const result = await postJSON("/api/admin/mark", { token: adminToken, playerId, points });
     if (!result.ok) {
-      setMessage(adminActionMessage, result.error || "Marking failed.", "error");
+      setMessage(adminActionMessage, getErrorMessage(result, "Marking failed."), "error");
       return;
     }
     setMessage(adminActionMessage, `Marked ${points} point(s).`, "ok");
@@ -196,7 +246,7 @@ async function fetchAdminState() {
       adminToken = "";
       latestState = null;
       showAdminLoginUI();
-      setMessage(adminLoginMessage, result.error || "Admin session expired. Login again.", "error");
+      setMessage(adminLoginMessage, getErrorMessage(result, "Admin session expired. Login again."), "error");
       return;
     }
     latestState = result.state;
@@ -223,7 +273,7 @@ adminLoginForm.addEventListener("submit", async (event) => {
   try {
     const result = await postJSON("/api/admin/login", { code });
     if (!result.ok) {
-      setMessage(adminLoginMessage, result.error || "Login failed.", "error");
+      setMessage(adminLoginMessage, getErrorMessage(result, "Login failed."), "error");
       return;
     }
     adminToken = result.token;
@@ -242,7 +292,7 @@ startBtn.addEventListener("click", async () => {
   try {
     const result = await postJSON("/api/admin/start", { token: adminToken });
     if (!result.ok) {
-      setMessage(adminActionMessage, result.error || "Could not start game.", "error");
+      setMessage(adminActionMessage, getErrorMessage(result, "Could not start game."), "error");
       return;
     }
     setMessage(adminActionMessage, "Game started. Question 1 is live.", "ok");
@@ -257,7 +307,7 @@ revealBtn.addEventListener("click", async () => {
   try {
     const result = await postJSON("/api/admin/reveal", { token: adminToken });
     if (!result.ok) {
-      setMessage(adminActionMessage, result.error || "Could not reveal answer.", "error");
+      setMessage(adminActionMessage, getErrorMessage(result, "Could not reveal answer."), "error");
       return;
     }
     setMessage(adminActionMessage, "Answer revealed to everyone.", "ok");
@@ -272,7 +322,7 @@ nextBtn.addEventListener("click", async () => {
   try {
     const result = await postJSON("/api/admin/next", { token: adminToken });
     if (!result.ok) {
-      setMessage(adminActionMessage, result.error || "Could not move next.", "error");
+      setMessage(adminActionMessage, getErrorMessage(result, "Could not move next."), "error");
       return;
     }
     if (result.finished) {
