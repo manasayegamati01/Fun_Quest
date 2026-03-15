@@ -1,18 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "functions": {
-    "server.py": {
-      "includeFiles": "{index.html,admin.html,styles.css,player.js,admin.js,riddle_bank.js}"
-    }
-  },
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "server.py"
-    }
-  ]
+  "version": 2
 }
