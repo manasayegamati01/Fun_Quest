@@ -323,6 +323,17 @@ def health():
     return mutate_or_503(operation)
 
 
+@app.get("/admin.html/health")
+def health_alias_admin_html():
+    # Alias so accidental nested URL checks still return service health.
+    return health()
+
+
+@app.get("/admin/health")
+def health_alias_admin():
+    return health()
+
+
 @app.post("/api/player/join")
 def api_player_join():
     payload = request.get_json(silent=True) or {}
