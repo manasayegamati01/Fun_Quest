@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fun Quest - Player Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="player-body">
+  <main class="layout">
+    <section class="card hero-card">
+      <h1>Fun Quest</h1>
+      <p class="tagline">Guess from clues, laugh together, and beat your friends.</p>
+      <p class="small-note">Player Portal</p>
+    </section>
+
+    <section id="joinCard" class="card join-card">
+      <h2>Join as Guest Player</h2>
+      <form id="joinForm" class="stack">
+        <label for="playerName">Your Name</label>
+        <input id="playerName" type="text" maxlength="24" placeholder="FunnyFox" required>
+        <button id="joinBtn" type="submit" class="btn btn-primary">Join Game</button>
+      </form>
+      <p id="joinLockNote" class="small-note hidden">You already joined this session. Use "Go to Play Page".</p>
+      <button id="goToPlayBtn" type="button" class="btn btn-accent hidden">Go to Play Page</button>
+      <p id="joinMessage" class="message"></p>
+    </section>
+
+    <section id="gameCard" class="card game-card hidden">
+      <div class="admin-controls">
+        <button id="backHomeBtn" type="button" class="btn btn-outline">Go to Home Page</button>
+      </div>
+      <div class="status-grid">
+        <div class="pill"><span>Question</span><strong id="questionCounter">0/0</strong></div>
+        <div class="pill"><span>Timer</span><strong id="timerValue">05:00</strong></div>
+        <div class="pill"><span>Your Score</span><strong id="myScore">0</strong></div>
+      </div>
+
+      <h2 id="questionTitle">Waiting for admin to start...</h2>
+      <p id="questionText" class="question-box">As soon as admin starts, your clue will appear here.</p>
+      <p id="revealAnswer" class="answer-box hidden"></p>
+
+      <form id="answerForm" class="stack">
+        <label for="answerInput">Your Answer</label>
+        <textarea id="answerInput" rows="3" maxlength="180" placeholder="Type your guess..."></textarea>
+        <button id="submitBtn" type="submit" class="btn btn-accent">Submit Answer</button>
+      </form>
+      <p id="submitMessage" class="message"></p>
+    </section>
+
+    <section class="card leaderboard-card">
+      <h2>Live Leaderboard</h2>
+      <ol id="leaderboardList" class="leaderboard"></ol>
+      <p id="playerCount" class="small-note">Players online: 0</p>
+    </section>
+  </main>
+
+  <script src="/player.js"></script>
+</body>
+</html>

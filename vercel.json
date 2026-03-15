@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "functions": {
+    "server.py": {
+      "runtime": "python3.12",
+      "includeFiles": "{index.html,admin.html,styles.css,player.js,admin.js,riddle_bank.js}"
+    }
+  },
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.py"
+    }
+  ]
+}

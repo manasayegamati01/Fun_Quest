@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fun Quest - Admin Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="admin-body">
+  <main class="layout admin-layout">
+    <section class="card hero-card">
+      <h1>Fun Quest</h1>
+      <p class="tagline">Admin controls all game actions from here.</p>
+      <p class="small-note">Admin Portal</p>
+    </section>
+
+    <section id="adminLoginCard" class="card admin-login-card">
+      <h2>Admin Login</h2>
+      <form id="adminLoginForm" class="stack">
+        <label for="adminCode">Admin Code</label>
+        <input id="adminCode" type="password" placeholder="admin123" required>
+        <button type="submit" class="btn btn-primary">Enter Admin Portal</button>
+      </form>
+      <p id="adminLoginMessage" class="message"></p>
+    </section>
+
+    <section id="adminGameCard" class="card admin-game-card hidden">
+      <div class="status-grid">
+        <div class="pill"><span>Question</span><strong id="adminQuestionCounter">0/0</strong></div>
+        <div class="pill"><span>Timer</span><strong id="adminTimerValue">05:00</strong></div>
+        <div class="pill"><span>Players</span><strong id="adminPlayersCount">0</strong></div>
+      </div>
+
+      <div class="admin-controls">
+        <button id="startBtn" class="btn btn-primary">Start New Game</button>
+        <button id="revealBtn" class="btn btn-accent">Reveal Answer</button>
+        <button id="nextBtn" class="btn btn-primary">Next Question</button>
+      </div>
+      <p id="adminActionMessage" class="message"></p>
+
+      <h2 id="adminQuestionTitle">Waiting to start...</h2>
+      <p id="adminQuestionText" class="question-box">Click "Start New Game" when players are ready.</p>
+      <p id="adminAnswerBox" class="answer-box hidden"></p>
+    </section>
+
+    <section class="card players-card">
+      <h2>Players and Marking</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Score</th>
+              <th>Current Answer</th>
+              <th>Mark</th>
+            </tr>
+          </thead>
+          <tbody id="playersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
